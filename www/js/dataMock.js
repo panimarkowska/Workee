@@ -7,3 +7,7 @@ dataMock.getUser = {
 	tel : '668536876',
 	position : 'accountant'
 };
+
+dataMock.login = {
+	isLogged : true
+};

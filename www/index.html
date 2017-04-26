@@ -7,38 +7,63 @@
 		<script src="js/workeeApi.js"></script>
 		<script src="js/dataMock.js"></script>
 		<script src="js/debugger.js"></script>
+		<link rel="stylesheet" href="css/workee.css" />
 
 		<!-- Libs -->
 		<script src="cordova.js"></script>
-		<link rel="stylesheet" href="css/jquery.mobile-1.4.5.min.css" />
+		<link rel="stylesheet" href="css/RedTest.min.css" />
+		<link rel="stylesheet" href="css/jquery.mobile.icons.min.css" />
+		 <link rel="stylesheet" href="css/jquery.mobile-1.4.5.min.css" />
 		<script src="js/jquery-2.1.4.min.js"></script>
 		<script src="js/jquery.mobile-1.4.5.min.js"></script>
 	</head>
 	<body onload="init()">
 
 		<!-- My app main page -->
-		<div data-role="page" id="pageone">
-		  <div data-role="header">
-			<h1>Hello World!</h1>
-		  </div>
-		  <div data-role="main" class="ui-content">
-			<p>Hi, I'm your mobile device</p>
-			<a href="#details" class="ui-btn ui-btn-inline ui-corner-all ui-shadow" onclick="deviceInfo()">Let me introduce myself!</a>
-		  </div>
-		  <div data-role="footer" data-position="fixed">
-			<h1>(c) Workee 2017</h1>
-		  </div> 
-		</div> 
-		
+		<div data-role="page" id="loginPage">
+			<div data-role="header">
+				<h1>Workee</h1>
+			</div>
+
+			<div data-role="main" class="ui-content">
+				<div class="ui-grid-b ui-responsive">
+					<div class="">
+						<input id="loginValue" type="text" name="login" placeholder="login" />
+						<input id="passwordValue" type="text" name="password" placeholder="password" />
+						<a href="#" class="ui-shadow ui-btn ui-corner-all" onclick="app.login()">Link button</a>
+					</div>
+				</div>
+
+			</div>
+			<div data-role="footer" data-position="fixed">
+				<h1>(c) Workee 2017</h1>
+			</div>
+		</div>
+
+		<div data-role="page" id="newsPage">
+			<div data-role="header">
+				<h1>News</h1>
+			</div>
+
+			<div data-role="main" class="ui-content">
+				<h1>News</h1>
+			</div>
+			<div data-role="footer" data-position="fixed">
+				<h1>(c) Workee 2017</h1>
+			</div>
+		</div>
+
+
+
 		<!-- Mobile device details page -->
 		<div data-role="page" id="details" data-dialog="true">
 			<div data-role="header" data-theme="a">
-				<h1>It's me</h1>
+				<h1>It's me test</h1>
 			</div>
 			<div role="main" class="ui-content">
 				<p id="deviceDetails">Place for device details ...</p>
 			</div>
-		</div>		
-		
+		</div>
+
 	</body>
 </html>
