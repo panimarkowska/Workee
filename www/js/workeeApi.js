@@ -5,13 +5,13 @@ workeeApi = function () {
             return mockAction;
         } else {
             $.ajax({
-                url: 'workeeApi.pl',
+                url: 'apiUrl',
                 data: params ? params : {},
                 method: "POST",
                 success: function (data) {
                     if (data.status == 'OK') {
                         return data;
-                     } else {
+                    } else {
                         app.debugMode.error('WorkeeApi: data.status: ' + data.status, data);
                         return null;
                     }
@@ -33,6 +33,18 @@ workeeApi = function () {
 		}
     };
 
+     var login = function (loginValue, passwordValue) {
+    	if (loginValue && passwordValue) {
+			var params = {
+			    login : loginValue,
+			    password : passwordValue
+			    };
+			return requestAction('login', params);
+		} else {
+    		app.debugMode.log('WorkeeApi: method getUser require parameters')
+		}
+    };
+
 	var getUsers = function () {
 		return requestAction('getUsers');
     };
@@ -40,6 +52,6 @@ workeeApi = function () {
     return {
     	getUser : getUser,
     	getUsers : getUsers,
-    	requestAction : requestAction
+    	login : login
 	}
 }
