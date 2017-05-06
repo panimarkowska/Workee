@@ -1,0 +1,100 @@
+#loadingPage {
+  background-color: rgba(255,255,255,0.8);
+  position: relative;
+  height: 100%;
+  z-index: 9999;
+}
+.loadingPageText {
+  font-weight: 600;
+  text-align: center;
+}
+.spinner {
+  margin: 100px auto;
+  width: 40px;
+  height: 40px;
+  position: relative;
+}
+
+.cube1, .cube2 {
+  background-color: #ef1a21;
+  width: 40px;
+  height: 40px;
+  position: absolute;
+  top: 0;
+  left: 0;
+
+  -webkit-animation: sk-cubemove 1.8s infinite ease-in-out;
+  animation: sk-cubemove 1.8s infinite ease-in-out;
+}
+
+.cube2 {
+  -webkit-animation-delay: -0.9s;
+  animation-delay: -0.9s;
+}
+
+@-webkit-keyframes sk-cubemove {
+  25% { -webkit-transform: translateX(42px) rotate(-90deg) scale(0.5) }
+  50% { -webkit-transform: translateX(42px) translateY(42px) rotate(-180deg) }
+  75% { -webkit-transform: translateX(0px) translateY(42px) rotate(-270deg) scale(0.5) }
+  100% { -webkit-transform: rotate(-360deg) }
+}
+
+@keyframes sk-cubemove {
+  25% {
+    transform: translateX(42px) rotate(-90deg) scale(0.5);
+    -webkit-transform: translateX(42px) rotate(-90deg) scale(0.5);
+  } 50% {
+    transform: translateX(42px) translateY(42px) rotate(-179deg);
+    -webkit-transform: translateX(42px) translateY(42px) rotate(-179deg);
+  } 50.1% {
+    transform: translateX(42px) translateY(42px) rotate(-180deg);
+    -webkit-transform: translateX(42px) translateY(42px) rotate(-180deg);
+  } 75% {
+    transform: translateX(0px) translateY(42px) rotate(-270deg) scale(0.5);
+    -webkit-transform: translateX(0px) translateY(42px) rotate(-270deg) scale(0.5);
+  } 100% {
+    transform: rotate(-360deg);
+    -webkit-transform: rotate(-360deg);
+  }
+}
+
+.headerTitle {
+  text-align: center;
+}
+
+.ui-icon-bars.ui-btn-icon-left {
+  height: 45px;
+  display: block;
+}
+.menu ul li {
+  width: 100% !important;
+}
+
+.news {
+  height: 100%;
+  display: table-cell;
+}
+
+.newsLine {
+  width: 25px;
+  height:100%;
+  float: left;
+  border-right: 2px solid red;
+}
+
+.newsLineSeparator {
+  height: 35%;
+}
+.newsLinePoint {
+  width: 12px;
+  height: 12px;
+  margin-right: -7px;
+  background-color: #ef1a21;
+  border-radius: 12px;
+  float: right;
+}
+
+.newsLineText {
+  width: 80%;
+  margin: 10px 50px;
+}
