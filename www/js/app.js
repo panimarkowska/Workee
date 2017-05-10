@@ -6,8 +6,7 @@ function init() {
     workee = workeeApi();
 
 	var onDeviceReady = function onDeviceReady() {
-	    app.menu();
-
+	    // app.menu();
 	    var cookies = document.cookie.split("; ");
 	    for (var i=0; i<cookies.length; i++){
             if (cookies[i].indexOf("userLogged") != -1){
@@ -17,14 +16,17 @@ function init() {
                 } else {
                     $.mobile.changePage($("#loginPage"), { transition: 'slidedown' });
                 }
+            } else {
+                 $.mobile.changePage($("#loginPage"), { transition: 'slidedown' });
             }
 	    }
-        $(document).on( "hashchange", function() {
-            app.showLoadingPage();
-        });
-	    $(document).on( "pageshow", function() {
-	        app.hideLoadingPage();
-        });
+	    // app.hideLoadingPage();
+        // $(document).on( "hashchange", function() {
+        //     app.showLoadingPage();
+        // });
+        // $(document).on( "pageshow", function() {
+	     //    app.hideLoadingPage();
+        // });
 	}
 	document.addEventListener("deviceready",onDeviceReady, false);
 }
@@ -53,24 +55,62 @@ app.menu = function() {
                 $('.menu').find('a[href="' + location.hash + '"]').addClass('ui-btn-active');
             }
     });
+}
 
+app.setHeader = function (title) {
+    var page = $.mobile.pageContainer.pagecontainer("getActivePage");
+    if (page.find('[data-role="header"]').length == 0) {
+        var header = $('<div data-role="header" data-position="fixed">');
+        page.prepend(header);
 
+        // header.load("../header.html", function () {
+        //     var headerTitle = title || $(this).parent().attr('data-header-title');
+        //     if (headerTitle) {
+        //         $(this).find('.headerTitle').text(headerTitle);
+        //     }
+        // });
+        var headerGrid = '<div class="ui-grid-b ui-responsive">' +
+	                        '<div class="ui-grid-b">' +
+                                '<div class="ui-block-a">' +
+                                    '<a href="#menuPage" class="ui-icon-bars ui-btn-icon-left menuButton"></a>' +
+                                '</div>' +
+                                '<div class="ui-block-b">' +
+                                    '<p class="headerTitle"></p>' +
+                                '</div>' +
+                                '<div class="ui-block-c"></div>' +
+                            '</div>' +
+                        '</div>';
+        header.append(headerGrid).trigger("create");
+        var headerTitle = title || page.attr('data-header-title');
+            if (headerTitle) {
+                header.find('.headerTitle').text(headerTitle);
+            }
+    } else {
+        page.find('[data-role="header"] p').text(title);
+    }
+    $.mobile.resetActivePageHeight();
+}
+app.setFooter = function (text) {
+    var page = $.mobile.pageContainer.pagecontainer("getActivePage");
+    var footerText = text ? text : '(c) Workee 2017';
+    page.append('<div data-role="footer" data-position="fixed"><h1>' + footerText + '</h1></div>').trigger("create");
+    $.mobile.resetActivePageHeight();
 }
 
 app.setHeaderAndFooter = function () {
-    // $('<div data-role="header"></div>').prependTo('[data-role="page"]');
-    // $('<div data-role="footer" data-position="fixed"></div>').appendTo('[data-role="page"]');
+    var page = $.mobile.pageContainer.pagecontainer("getActivePage");
+    if (page.find('[data-role="header"]').length == 0) {
+        app.setHeader();
+        app.setFooter();
+    }
 
-    $('[data-role="header"]').load("../header.html", function(){
-        console.log(this)
-        var headerTitle = $(this).parent().attr('data-header-title');
-        if (headerTitle) {
-            $(this).find('.headerTitle').text(headerTitle);
+    $(document).on( "pagebeforeshow", function() {
+        var page = $.mobile.pageContainer.pagecontainer("getActivePage");
+        if (page.find('[data-role="header"]').length == 0) {
+            app.setHeader();
+            app.setFooter();
         }
-
     });
-    $('<h1>(c) Workee 2017</h1>').appendTo($('[data-role="footer"]'));
-    $.mobile.changePage($(location.hash));
 }
 
 app.login = function (){
