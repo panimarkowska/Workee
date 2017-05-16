@@ -57,6 +57,7 @@ app.menu = function() {
         var activePage = $.mobile.pageContainer.pagecontainer("getActivePage");
         if (activePage.attr('id') == "menuPage" && swipe != "right") {
             $.mobile.back();
+            menuIsActive = false;
         } else {
             $.mobile.changePage($("#menuPage"));
         }
@@ -159,6 +160,14 @@ app.login = function (){
     else{
         alert("Invalid login.")
     }
+}
+
+app.register = function (){
+    $("#registrationForm").validate({
+        submitHandler: function(form){
+                alert("Call login action")
+            }
+    })
 }
 
 app.logout = function (){
