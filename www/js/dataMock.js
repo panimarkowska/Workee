@@ -1,7 +1,7 @@
 dataMock = {};
 
 dataMock.login = {
-	isLogged : true
+	isLogged : 102
 };
 
 dataMock.getUser = {

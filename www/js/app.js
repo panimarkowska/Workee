@@ -125,18 +125,23 @@ app.setHeaderAndFooter = function () {
 }
 
 app.isLogin = function (){
-    var cookies = document.cookie.split("; ");
-    for (var i=0; i<cookies.length; i++){
-        if (cookies[i].indexOf("userLogged") != -1){
-            var userLogged = cookies[i].split("=")[1];
-            if (userLogged=="1"){
-                return true;
-            } else {
-                return false;
-            }
-        } else {
-             return false;
-        }
+    // var cookies = document.cookie.split("; ");
+//     for (var i=0; i<cookies.length; i++){
+//         if (cookies[i].indexOf("userLogged") != -1){
+//             var userLogged = cookies[i].split("=")[1];
+//             if (userLogged=="1"){
+//                 return true;
+//             } else {
+//                 return false;
+//             }
+//         } else {
+//              return false;
+//         }
+//     }
+    if (app.getFromLocalStorage('userLogged')) {
+        return true
+    } else {
+        return false
     }
     return workee.isLogin();
 }
@@ -149,7 +154,8 @@ app.login = function (){
         if (passwordValue.length>0){
             var data = workee.login(loginValue, passwordValue);
             if (data.isLogged){
-                document.cookie = "userLogged=1";
+                // document.cookie = "userLogged=1";
+                app.setInLocalStorage('userLogged', data.isLogged)
                 location.hash = "#newsPage";
              }
         }
@@ -171,7 +177,8 @@ app.register = function (){
 }
 
 app.logout = function (){
-    document.cookie = "userLogged=0";
+    app.removeFromLocalStorage('userLogged');
+    // document.cookie = "userLogged=0";
     $.mobile.changePage($('#loginPage'));
 
 }
@@ -254,4 +261,32 @@ app.showDialogPage = function (status, headerTitle, bodyTitle, message, time){
 
 app.hideDialogPage = function (){
     $.mobile.back();
+}
+
+app.getFromLocalStorage = function (key) {
+    var storageParams = {};
+    if (localStorage.app) {
+        storageParams = JSON.parse(localStorage.app);
+    }
+    if (key) {
+        return storageParams[key];
+    } else {
+        return storageParams;
+    }
+}
+
+app.setInLocalStorage = function (key, value) {
+    var storageParams = app.getFromLocalStorage();
+    storageParams[key] = value;
+    localStorage.app = JSON.stringify(storageParams);
+
+}
+
+app.removeFromLocalStorage = function (key) {
+    var storageParams = app.getFromLocalStorage();
+    if (storageParams[key]) {
+        delete storageParams[key];
+        localStorage.app = JSON.stringify(storageParams);
+    }
+
 }
