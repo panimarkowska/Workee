@@ -38,7 +38,7 @@
 				<form class="formValidation" data-method="login">
 					<fieldset>
 						<input id="loginValue" type="text" name="login" placeholder="login" required/>
-						<input id="passwordValue" type="text" name="password" placeholder="password" required/>
+						<input id="passwordValue" type="password" name="password" placeholder="password" required/>
 						<input class="submit" type="submit" value="Submit">
 					</fieldset>
 				</form>
@@ -100,38 +100,36 @@
 
 		</div>
 
-		<!--_____________________ REGISTRATION PAGE ____________________-->
-
-		<div data-role="page" id="registrationPage" data-header-title="Registration" data-header-html="registrationPage">
+		<!--_____________________REGISTRATION PAGE____________________ -->
+		<div data-role="page" id="registrationPage" data-header-title="Registration" data-header-menu="registrationPage">
 			<div data-role="main" class="ui-content">
 				<div class="ui-grid-b ui-responsive">
 					<div class="ui-grid-b">
-						<form id="registrationForm">
-
-							<input id="nameValue" type="text" name="name" placeholder="name" />
-							<input id="surnameValue" type="text" name="surname" placeholder="surname" />
-							<input id="positionValue" type="text" name="position" placeholder="position" />
-							<input id="scopeValue" type="text" name="scope" placeholder="scope" />
-							<input id="deskValue" type="text" name="desk" placeholder="desk" />
-							<input id="birthdayValue" type="text" name="birthday" placeholder="birthday" />
-							<input id="interestsValue" type="text" name="interests" placeholder="interests/personal info" />
-
-							<fieldset data-role="controlgroup">
-								<legend>Choose your gender:</legend>
-								<label for="male">Male</label>
-								<input type="radio" name="gender" id="male" value="male" checked>
-								<label for="female">Female</label>
-								<input type="radio" name="gender" id="female" value="female">
-							</fieldset>
-
-						<a href="#" class="ui-shadow ui-btn ui-corner-all" onclick="app.register()">Register</a>
-						</form>
+						<div class="ui-block-a"></div>
+						<div class="ui-block-b">
+							<img style="width:100%" src="img/logo.png"/>
+						</div>
+						<div class="ui-block-c"></div>
 					</div>
 				</div>
+				<form class="formValidation" data-method="register">
+					<fieldset>
+						<input id="nameValue" type="text" name="name" placeholder="your name" required/>
+						<input id="surnameValue" type="text" name="surname" placeholder="your surname" required/>
+						<input id="positionValue" type="text" name="position" placeholder="name of your position" required/>
+						<input id="phoneValue" type="tel" name="phone" placeholder="your phone number" required/>
+						<input id="emailValue" type="email" name="email" placeholder="your email address" required/>
+						<input id="websiteValue" type="url" name="website" placeholder="link to your website" />
+						<textarea id="scopeValue" name="scope">your daily scope of tasks</textarea>
+						<input id="deskValue" type="number" name="desk" placeholder="number of your desk" required/>
+						<input id="birthdayValue" type="date" name="birthday" placeholder="your birthday" required/>
+						<textarea id="interestsValue" name="interests">your hobbies or interests</textarea>
+						<input class="submit" type="submit" value="Save">
+					</fieldset>
+				</form>
+
 			</div>
-
 		</div>
-
 
 		<!--_____________________ PEOPLE PAGE____________________ -->
 		<div data-role="page" id="peoplePage" data-header-title="Search for employees" data-action-method="getUsers" data-header-title="People">

@@ -49,9 +49,14 @@ workeeApi = function () {
 		return requestAction('getUsers');
     };
 
+    var register = function (registerParams){
+        return requestAction('register', registerParams);
+    };
+
     return {
     	getUser : getUser,
     	getUsers : getUsers,
-    	login : login
+    	login : login,
+    	register : register
 	}
 }
