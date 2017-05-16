@@ -4,41 +4,62 @@ if (typeof app == 'undefined') {
 function init() {
     app.setHeaderAndFooter();
     workee = workeeApi();
+    app.formsValidation();
 
-	var onDeviceReady = function onDeviceReady() {
-	    // app.menu();
-	    var cookies = document.cookie.split("; ");
-	    for (var i=0; i<cookies.length; i++){
-            if (cookies[i].indexOf("userLogged") != -1){
-                var userLogged = cookies[i].split("=")[1];
-                if (userLogged=="1"){
-                    $.mobile.changePage($("#newsPage"), { transition: 'slidedown' });
-                } else {
-                    $.mobile.changePage($("#loginPage"), { transition: 'slidedown' });
-                }
-            } else {
-                 $.mobile.changePage($("#loginPage"), { transition: 'slidedown' });
+	var onDeviceReady = function () {
+	    app.menu();
+
+        if (app.isLogin()){
+            $.mobile.changePage($("#newsPage"));
+        } else {
+            $.mobile.changePage($("#loginPage"));
+        }
+	    $(document).on("pagebeforeshow", function(event) {
+            if (!app.isLogin()){
+                $.mobile.changePage($("#loginPage"));
             }
-	    }
-	    // app.hideLoadingPage();
-        // $(document).on( "hashchange", function() {
-        //     app.showLoadingPage();
-        // });
-        // $(document).on( "pageshow", function() {
-	     //    app.hideLoadingPage();
-        // });
+        });
+        $(document).on("pagechange", function(event) {
+            var activePage = $.mobile.pageContainer.pagecontainer("getActivePage");
+            var actionMethod = activePage.attr('data-action-method');
+            if (actionMethod && app[actionMethod]) {
+                app[actionMethod]();
+            }
+        });
 	}
 	document.addEventListener("deviceready",onDeviceReady, false);
 }
 
+app.formsValidation = function() {
+    $('.formValidation').validate({
+        submitHandler: function(formEl) {
+            var form = $(formEl)
+            var methodName = form.attr('data-method');
+            if (methodName && app[methodName]) {
+                params = {};
+                form.find('input').each(function() {
+                    var key = $(this).attr("name")
+                    if (key && key != 'submit') {
+                        params[key] = $(this).val();
+                    }
+                });
+                app[methodName](params);
+            }
+        },
+        invalidHandler: function(event, validator) {
+            console.log('błędny formularz', validator)
+        }
+    });
+}
+
 app.menu = function() {
-    var menuIsActive = false;
-    var switchMenu = function(){
-        if (menuIsActive) {
+    var switchMenu = function(swipe){
+        var activePage = $.mobile.pageContainer.pagecontainer("getActivePage");
+        if (activePage.attr('id') == "menuPage" && swipe != "right") {
             $.mobile.back();
             menuIsActive = false;
         } else {
-            menuIsActive = true;
+            $.mobile.changePage($("#menuPage"));
         }
     };
 
@@ -46,45 +67,23 @@ app.menu = function() {
         switchMenu();
     });
     $(document).on( "swiperight", function() {
-        switchMenu();
+        switchMenu("right");
     });
-    $(document).on( "pagechange", function() {
-            if (location.hash != '#menuPage') {
-                $('.menu').find('.ui-btn-active').removeClass('ui-btn-active');
-                $('.menu').find('a[href="' + location.hash + '"]').addClass('ui-btn-active');
-            }
+    $(document).on( "swipeleft", function() {
+        $.mobile.back();
     });
 }
 
-app.setHeader = function (title, html) {
+app.setHeader = function (title) {
     var page = $.mobile.pageContainer.pagecontainer("getActivePage");
     if (page.find('[data-role="header"]').length == 0) {
         var header = $('<div data-role="header" data-position="fixed">');
         page.prepend(header);
 
-        // header.load("../header.html", function () {
-        //     var headerTitle = title || $(this).parent().attr('data-header-title');
-        //     if (headerTitle) {
-        //         $(this).find('.headerTitle').text(headerTitle);
-        //     }
-        // });
-
-        var html = {};
-
-        html.test = '<div class="ui-grid-b ui-responsive">';
-
-        html.registrationPage = '<div class="ui-grid-b ui-responsive">' +
+        var headerGrid = '<div class="ui-grid-b ui-responsive">' +
 	                        '<div class="ui-grid-b">' +
                                 '<div class="ui-block-a">' +
-                                    '<div class="headerHtml"> Give us some details about yourself </div>' +
-                                '</div>' +
-                            '</div>' +
-                        '</div>';
-
-        var defaultHeader = '<div class="ui-grid-b ui-responsive">' +
-	                        '<div class="ui-grid-b">' +
-                                '<div class="ui-block-a">' +
-                                    '<a href="#menuPage" class="ui-icon-bars ui-btn-icon-left menuButton"></a>' +
+                                (page.attr('data-header-menu') == "false" ? '' : '<a href="#menuPage" class="menuButton ui-icon-bars ui-btn-icon-left"</a>')  +
                                 '</div>' +
                                 '<div class="ui-block-b">' +
                                     '<p class="headerTitle"></p>' +
@@ -92,19 +91,11 @@ app.setHeader = function (title, html) {
                                 '<div class="ui-block-c"></div>' +
                             '</div>' +
                         '</div>';
-
-        var htmlKey = page.attr('data-header-html');
-        if (html[htmlKey]){
-            header.append(html[htmlKey]).trigger("create");
-        }
-        else{
-             header.append(defaultHeader).trigger("create");
-        }
-
+        header.append(headerGrid).trigger("create");
         var headerTitle = title || page.attr('data-header-title');
-            if (headerTitle) {
-                header.find('.headerTitle').text(headerTitle);
-            }
+        if (headerTitle) {
+            header.find('.headerTitle').text(headerTitle);
+        }
     } else {
         page.find('[data-role="header"] p').text(title);
     }
@@ -133,15 +124,38 @@ app.setHeaderAndFooter = function () {
     });
 }
 
+app.isLogin = function (){
+    // var cookies = document.cookie.split("; ");
+//     for (var i=0; i<cookies.length; i++){
+//         if (cookies[i].indexOf("userLogged") != -1){
+//             var userLogged = cookies[i].split("=")[1];
+//             if (userLogged=="1"){
+//                 return true;
+//             } else {
+//                 return false;
+//             }
+//         } else {
+//              return false;
+//         }
+//     }
+    if (app.getFromLocalStorage('userLogged')) {
+        return true
+    } else {
+        return false
+    }
+    return workee.isLogin();
+}
+
 app.login = function (){
     var loginValue = document.getElementById("loginValue").value;
     var passwordValue = document.getElementById("passwordValue").value;
 
-    if (loginValue.length>0){
+    if (loginValue.length > 0){
         if (passwordValue.length>0){
             var data = workee.login(loginValue, passwordValue);
             if (data.isLogged){
-                document.cookie = "userLogged=1";
+                // document.cookie = "userLogged=1";
+                app.setInLocalStorage('userLogged', data.isLogged)
                 location.hash = "#newsPage";
              }
         }
@@ -163,14 +177,40 @@ app.register = function (){
 }
 
 app.logout = function (){
-    document.cookie = "userLogged=0";
-    $.mobile.changePage($('#loginPage'), {
-        allowSamePageTransition: true,
-        transition: 'none',
-        reloadPage: false
-    });
+    app.removeFromLocalStorage('userLogged');
+    // document.cookie = "userLogged=0";
+    $.mobile.changePage($('#loginPage'));
 
 }
+
+app.getUsers = function (){
+    var users = workee.getUsers();
+    var htmlList = ''
+    for(var i=0; i < users.length; i++){
+        var user = users[i];
+        htmlList += '<li><a href="#" onclick="app.getUser(' + user.id + ')">' + user.name + ' ' + user.surname + '</a></li>'
+    }
+    $('#getPeopleResult').append(htmlList).listview( "refresh" );
+}
+
+app.getUser = function (id){
+    var user = workee.getUser(id);
+    $('#employeeData').append(user.email + ' '+ user.position);
+    $.mobile.changePage($('#userPage'));
+    app.setHeader(user.name + ' '+ user.surname)
+
+}
+
+
+
+
+
+
+
+
+
+
+
 
 app.showLoadingPage = function (msg){
     var loadingEl = $('#loadingPage');
@@ -184,4 +224,69 @@ app.showLoadingPage = function (msg){
 
 app.hideLoadingPage = function (){
      $('#loadingPage').hide();
+}
+
+app.showDialogPage = function (status, headerTitle, bodyTitle, message, time){
+        var dialogPage = $('#dialogPage');
+        dialogPage.removeClass('success');
+        dialogPage.removeClass('warning');
+        dialogPage.removeClass('error');
+        dialogPage.addClass(status);
+
+        $('#dialogHeaderTitle').text(headerTitle);
+        $('#dialogTitle').text(bodyTitle);
+        $('#dialogTitle').text(bodyTitle);
+        $('#dialogMessage').text(message);
+
+
+        $.mobile.changePage($("#dialogPage"), {});
+        if (time) {
+            $('#dialogTimer').text(time + " sec");
+            $('#dialogTimer').removeClass();
+            $('#dialogTimer').addClass(status);
+            timer = 1
+            var timerToClose = setInterval(function(){
+                $('#dialogTimer').text(time-timer + " sec");
+                timer++;
+            }, 1000);
+
+            setTimeout(function(){
+                clearInterval(timerToClose);
+                app.hideDialogPage();
+            }, time * 1000);
+        } else {
+            $('#dialogTimer').text('');
+        }
+}
+
+app.hideDialogPage = function (){
+    $.mobile.back();
+}
+
+app.getFromLocalStorage = function (key) {
+    var storageParams = {};
+    if (localStorage.app) {
+        storageParams = JSON.parse(localStorage.app);
+    }
+    if (key) {
+        return storageParams[key];
+    } else {
+        return storageParams;
+    }
+}
+
+app.setInLocalStorage = function (key, value) {
+    var storageParams = app.getFromLocalStorage();
+    storageParams[key] = value;
+    localStorage.app = JSON.stringify(storageParams);
+
+}
+
+app.removeFromLocalStorage = function (key) {
+    var storageParams = app.getFromLocalStorage();
+    if (storageParams[key]) {
+        delete storageParams[key];
+        localStorage.app = JSON.stringify(storageParams);
+    }
+
 }

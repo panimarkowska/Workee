@@ -1,5 +1,5 @@
 #loadingPage {
-  background-color: rgba(255,255,255,0.8);
+  background-color: rgba(255,255,255,0.9);
   position: relative;
   height: 100%;
   z-index: 9999;
@@ -8,53 +8,45 @@
   font-weight: 600;
   text-align: center;
 }
+
 .spinner {
-  margin: 60% 40% 20% 40%;
-  width: 40px;
-  height: 40px;
-  position: relative;
+  margin: 32vh auto 0 auto;
+  width: 70px;
+  text-align: center;
 }
-
-.cube1, .cube2 {
+.spinner > div {
+  width: 18px;
+  height: 18px;
   background-color: #ef1a21;
-  width: 40px;
-  height: 40px;
-  position: absolute;
-  top: 0;
-  left: 0;
 
-  -webkit-animation: sk-cubemove 1.8s infinite ease-in-out;
-  animation: sk-cubemove 1.8s infinite ease-in-out;
+  border-radius: 100%;
+  display: inline-block;
+  -webkit-animation: sk-bouncedelay 1.4s infinite ease-in-out both;
+  animation: sk-bouncedelay 1.4s infinite ease-in-out both;
 }
 
-.cube2 {
-  -webkit-animation-delay: -0.9s;
-  animation-delay: -0.9s;
+.spinner .bounce1 {
+  -webkit-animation-delay: -0.32s;
+  animation-delay: -0.32s;
 }
 
-@-webkit-keyframes sk-cubemove {
-  25% { -webkit-transform: translateX(42px) rotate(-90deg) scale(0.5) }
-  50% { -webkit-transform: translateX(42px) translateY(42px) rotate(-180deg) }
-  75% { -webkit-transform: translateX(0px) translateY(42px) rotate(-270deg) scale(0.5) }
-  100% { -webkit-transform: rotate(-360deg) }
+.spinner .bounce2 {
+  -webkit-animation-delay: -0.16s;
+  animation-delay: -0.16s;
 }
 
-@keyframes sk-cubemove {
-  25% {
-    transform: translateX(42px) rotate(-90deg) scale(0.5);
-    -webkit-transform: translateX(42px) rotate(-90deg) scale(0.5);
-  } 50% {
-    transform: translateX(42px) translateY(42px) rotate(-179deg);
-    -webkit-transform: translateX(42px) translateY(42px) rotate(-179deg);
-  } 50.1% {
-    transform: translateX(42px) translateY(42px) rotate(-180deg);
-    -webkit-transform: translateX(42px) translateY(42px) rotate(-180deg);
-  } 75% {
-    transform: translateX(0px) translateY(42px) rotate(-270deg) scale(0.5);
-    -webkit-transform: translateX(0px) translateY(42px) rotate(-270deg) scale(0.5);
-  } 100% {
-    transform: rotate(-360deg);
-    -webkit-transform: rotate(-360deg);
+@-webkit-keyframes sk-bouncedelay {
+  0%, 80%, 100% { -webkit-transform: scale(0) }
+  40% { -webkit-transform: scale(1.0) }
+}
+
+@keyframes sk-bouncedelay {
+  0%, 80%, 100% {
+    -webkit-transform: scale(0);
+    transform: scale(0);
+  } 40% {
+    -webkit-transform: scale(1.0);
+    transform: scale(1.0);
   }
 }
 
@@ -97,4 +89,62 @@
 .newsLineText {
   width: 80%;
   margin: 10px 50px;
+}
+
+#dialogTitle {
+    margin: auto;
+    text-align: center;
+}
+
+#dialogPage.success #dialogTitle{
+  color : green;
+}
+
+#dialogPage.success #dialogHead{
+  background-color : green;
+}
+
+#dialogPage.error #dialogTitle{
+  color : #ef1a21;
+}
+
+#dialogPage.error #dialogHead{
+  background-color : #ef1a21;
+}
+
+#dialogPage.warning #dialogTitle{
+  color : orange;
+}
+
+#dialogPage.warning #dialogHead{
+  background-color : orange;
+}
+
+
+#dialogHead.success, .success {
+  color : green;
+}
+
+#dialogHead.error, .error {
+  color : #ef1a21;
+}
+
+#dialogHead.warning, .warning {
+  color : orange;
+}
+
+#dialogHeaderTitle {
+  text-shadow: 0 0px 0 #FFFFFF;
+  color : #FFFFFF
+}
+
+#dialogTimer {
+  font-size: 10px;
+  float: right;
+  bottom: 0px;
+}
+
+#dialogHead .ui-icon-delete.ui-btn-icon-notext {
+      background-color: transparent !important;
+      border-color: transparent; !important;
 }
