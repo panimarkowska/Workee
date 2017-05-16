@@ -39,7 +39,6 @@ app.menu = function() {
             menuIsActive = false;
         } else {
             menuIsActive = true;
-
         }
     };
 
@@ -57,7 +56,7 @@ app.menu = function() {
     });
 }
 
-app.setHeader = function (title) {
+app.setHeader = function (title, html) {
     var page = $.mobile.pageContainer.pagecontainer("getActivePage");
     if (page.find('[data-role="header"]').length == 0) {
         var header = $('<div data-role="header" data-position="fixed">');
@@ -69,7 +68,20 @@ app.setHeader = function (title) {
         //         $(this).find('.headerTitle').text(headerTitle);
         //     }
         // });
-        var headerGrid = '<div class="ui-grid-b ui-responsive">' +
+
+        var html = {};
+
+        html.test = '<div class="ui-grid-b ui-responsive">';
+
+        html.registrationPage = '<div class="ui-grid-b ui-responsive">' +
+	                        '<div class="ui-grid-b">' +
+                                '<div class="ui-block-a">' +
+                                    '<div class="headerHtml"> Give us some details about yourself </div>' +
+                                '</div>' +
+                            '</div>' +
+                        '</div>';
+
+        var defaultHeader = '<div class="ui-grid-b ui-responsive">' +
 	                        '<div class="ui-grid-b">' +
                                 '<div class="ui-block-a">' +
                                     '<a href="#menuPage" class="ui-icon-bars ui-btn-icon-left menuButton"></a>' +
@@ -80,7 +92,15 @@ app.setHeader = function (title) {
                                 '<div class="ui-block-c"></div>' +
                             '</div>' +
                         '</div>';
-        header.append(headerGrid).trigger("create");
+
+        var htmlKey = page.attr('data-header-html');
+        if (html[htmlKey]){
+            header.append(html[htmlKey]).trigger("create");
+        }
+        else{
+             header.append(defaultHeader).trigger("create");
+        }
+
         var headerTitle = title || page.attr('data-header-title');
             if (headerTitle) {
                 header.find('.headerTitle').text(headerTitle);
@@ -117,7 +137,6 @@ app.login = function (){
     var loginValue = document.getElementById("loginValue").value;
     var passwordValue = document.getElementById("passwordValue").value;
 
-
     if (loginValue.length>0){
         if (passwordValue.length>0){
             var data = workee.login(loginValue, passwordValue);
@@ -133,6 +152,14 @@ app.login = function (){
     else{
         alert("Invalid login.")
     }
+}
+
+app.register = function (){
+    $("#registrationForm").validate({
+        submitHandler: function(form){
+                alert("Call login action")
+            }
+    })
 }
 
 app.logout = function (){
