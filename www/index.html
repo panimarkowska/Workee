@@ -18,12 +18,13 @@
 		<link rel="stylesheet" href="css/jquery.mobile.structure-1.4.5.min.css" />
 
 		<script src="js/jquery-2.1.4.min.js"></script>
+		<script src="js/jquery.validate.js"></script>
 		<script src="js/jquery.mobile-1.4.5.min.js"></script>
 	</head>
 	<body class="ui-page-theme-a" onload="init()">
 
 		<!--_____________________ LOGIN PAGE____________________ -->
-		<div data-role="page" id="loginPage" data-header-title="Login Page">
+		<div data-role="page" id="loginPage" data-header-title="Login Page" data-header-menu="false">
 			<div data-role="main" class="ui-content">
 				<div class="ui-grid-b ui-responsive">
 					<div class="ui-grid-b">
@@ -33,10 +34,14 @@
 						</div>
 						<div class="ui-block-c"></div>
 					</div>
-					<input id="loginValue" type="text" name="login" placeholder="login" />
-					<input id="passwordValue" type="text" name="password" placeholder="password" />
-					<a href="#" class="ui-shadow ui-btn ui-corner-all" onclick="app.login()">Login</a>
 				</div>
+				<form class="formValidation" data-method="login">
+					<fieldset>
+						<input id="loginValue" type="text" name="login" placeholder="login" required/>
+						<input id="passwordValue" type="text" name="password" placeholder="password" required/>
+						<input class="submit" type="submit" value="Submit">
+					</fieldset>
+				</form>
 
 			</div>
 		</div>
@@ -51,6 +56,7 @@
 							<li><a href="#myProfilePage" class="ui-btn">My profile</a></li>
 							<li><a href="#peoplePage" class="ui-btn">People</a></li>
 							<li><a href="#testPage" class="ui-btn">Test Page</a></li>
+							<li><a href="#dialogPage" class="ui-btn">Dialog Page</a></li>
 							<li><a href="#" class="ui-btn" onclick="app.showLoadingPage()">loading Page</a></li>
 							<li><a href="#" class="ui-btn" onclick="app.logout()">Logout</a></li>
 						</ul>
@@ -59,7 +65,6 @@
 
 			</div>
 		</div>
-
 
 		<!--_____________________ NEWS PAGE ____________________ -->
 		<div data-role="page" id="newsPage" data-header-title="News page">
@@ -91,12 +96,60 @@
 					</div>
 				</div>
 			</div>
+		</div>
 
+
+		<!--_____________________ PEOPLE PAGE____________________ -->
+		<div data-role="page" id="peoplePage" data-action-method="getUsers" data-header-title="People Page">
+			<div data-role="main" class="ui-content">
+				<ul id='getPeopleResult'data-role="listview" data-inset="true" data-filter="true">
+				</ul>
+			</div>
+		</div>
+
+
+		<!--_____________________ EMPLOYEE PAGE____________________ -->
+		<div data-role="page" id="userPage">
+			<div data-role="main" class="ui-content">
+				<div id="employeeData"></div>
+			</div>
 		</div>
 
 
 
 
+
+		<!--_____________________ LOADING PAGE____________________ -->
+		<div id="loadingPage" style="display:none">
+			<div class="ui-grid-b ui-responsive">
+			<div class="spinner">
+				<div class="bounce1"></div>
+				<div class="bounce2"></div>
+				<div class="bounce3"></div>
+			</div>
+				<p class="loadingPageText">Loading....</p>
+			</div>
+		</div>
+
+		<!--_____________________ DIALOG PAGE____________________ -->
+		<div data-role="page" id="dialogPage" data-dialog="true" data-close-btn="right">
+			<div id="dialogHead" data-role="header">
+				<h2 id="dialogHeaderTitle"></h2>
+			</div>
+			<div class="ui-content" role="main">
+				<h2 id="dialogTitle"></h2>
+				<p id="dialogMessage"></p>
+				<p id="dialogTimer"></p>
+				<div class="ui-grid-a" style="display: none">
+					<div class="ui-block-a">
+						<a href="#" id="exit-button" class="ui-btn ui-btn-b ui-shadow ui-corner-all">Exit</a>
+					</div>
+					<div class="ui-block-b">
+						<a href="#" id="cancel-button" class="ui-btn ui-shadow ui-corner-all">Cancel</a>
+					</div>
+				</div>
+			</div>
+		</div>
 
 
 
@@ -120,26 +173,26 @@
 				   <input type="range" name="slider" id="slider-0" value="25" min="0" max="100"  />
 				</form>
 
-    <form method="post" action="/action_page_post.php">
-      <fieldset data-role="controlgroup">
-      <legend>Choose your gender:</legend>
-        <label for="male">Male</label>
-        <input type="radio" name="gender" id="male" value="male" checked>
-        <label for="female">Female</label>
-        <input type="radio" name="gender" id="female" value="female">
-      </fieldset>
+			<form method="post" action="/action_page_post.php">
+			  <fieldset data-role="controlgroup">
+			  <legend>Choose your gender:</legend>
+				<label for="male">Male</label>
+				<input type="radio" name="gender" id="male" value="male" checked>
+				<label for="female">Female</label>
+				<input type="radio" name="gender" id="female" value="female">
+			  </fieldset>
 
-      <fieldset data-role="controlgroup">
-        <legend>Choose as many favorite colors as you'd like:</legend>
-          <label for="red">Red</label>
-          <input type="checkbox" name="favcolor" id="red" value="red" checked>
-          <label for="green">Green</label>
-          <input type="checkbox" name="favcolor" id="green" value="green">
-          <label for="blue">Blue</label>
-          <input type="checkbox" name="favcolor" id="blue" value="blue" checked>
-      </fieldset>
-      <input type="submit" data-inline="true" value="Submit">
-    </form>
+			  <fieldset data-role="controlgroup">
+				<legend>Choose as many favorite colors as you'd like:</legend>
+				  <label for="red">Red</label>
+				  <input type="checkbox" name="favcolor" id="red" value="red" checked>
+				  <label for="green">Green</label>
+				  <input type="checkbox" name="favcolor" id="green" value="green">
+				  <label for="blue">Blue</label>
+				  <input type="checkbox" name="favcolor" id="blue" value="blue" checked>
+			  </fieldset>
+			  <input type="submit" data-inline="true" value="Submit">
+			</form>
 
 
 				<input type="submit" value="Submit" data-icon="check" data-iconpos="right" data-inline="true">
@@ -167,16 +220,9 @@
 			</div>
 		</div>
 
-		<!--_____________________ LOADING PAGE____________________ -->
-		<div id="loadingPage" style="display:none">
-			<div class="ui-grid-b ui-responsive">
-				<div class="spinner">
-				  <div class="cube1"></div>
-				  <div class="cube2"></div>
-				</div>
-				<p class="loadingPageText">Loading....</p>
-			</div>
-		</div>
+
+
+
 
 	</body>
 </html>
