@@ -4,6 +4,10 @@ dataMock.login = {
 	isLogged : 102
 };
 
+dataMock.register = {
+    isRegistered : true
+};
+
 dataMock.getUser = {
 	id : '102',
 	name : 'Michał',
