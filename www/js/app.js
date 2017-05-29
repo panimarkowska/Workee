@@ -169,18 +169,17 @@ app.login = function (){
 }
 
 app.register = function (){
-    var registerParams ={
-        var nameValue = document.getElementById("nameValue").value;
-        var surnameValue = document.getElementById("surnameValue").value;
-        var positionValue = document.getElementById("positionValue").value;
-        var phoneValue = document.getElementById("phoneValue").value;
-        var emailValue = document.getElementById("emailValue").value;
-        var websiteValue = document.getElementById("websiteValue").value;
-        var scopeValue = document.getElementById("scopeValue").value;
-        var deskValue = document.getElementById("deskValue").value;
-        var birthdayValue = document.getElementById("birthdayValue").value;
-        var interestsValue = document.getElementById("interestsValue").value;
-    }
+    var registerParams = {};
+        registerParams.name = document.getElementById("nameValue").value;
+        registerParams.surname = document.getElementById("surnameValue").value;
+        registerParams.position = document.getElementById("positionValue").value;
+        registerParams.phone = document.getElementById("phoneValue").value;
+        registerParams.email = document.getElementById("emailValue").value;
+        registerParams.website = document.getElementById("websiteValue").value;
+        registerParams.scope = document.getElementById("scopeValue").value;
+        registerParams.desk = document.getElementById("deskValue").value;
+        registerParams.birthday = document.getElementById("birthdayValue").value;
+        registerParams.interests = document.getElementById("interestsValue").value;
     workee.register(registerParams);
 }
 
