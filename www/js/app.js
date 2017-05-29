@@ -15,7 +15,8 @@ function init() {
             $.mobile.changePage($("#loginPage"));
         }
 	    $(document).on("pagebeforeshow", function(event) {
-            if (!app.isLogin()){
+	        var activePage = $.mobile.pageContainer.pagecontainer("getActivePage");
+            if (!app.isLogin() && activePage.attr('id') != "dialogPage"){
                 $.mobile.changePage($("#loginPage"));
             }
         });
@@ -31,25 +32,37 @@ function init() {
 }
 
 app.formsValidation = function() {
-    $('.formValidation').validate({
-        submitHandler: function(formEl) {
-            var form = $(formEl)
-            var methodName = form.attr('data-method');
-            if (methodName && app[methodName]) {
-                params = {};
-                form.find('input').each(function() {
-                    var key = $(this).attr("name")
-                    if (key && key != 'submit') {
-                        params[key] = $(this).val();
-                    }
-                });
-                app[methodName](params);
+    $.validator.messages.required = '';
+    var forms = $('.formValidation');
+    for (var j=0 ; j < forms.length; j++) {
+        $(forms[j]).validate({
+            submitHandler: function(formEl) {
+                var form = $(formEl)
+                var methodName = form.attr('data-method');
+                if (methodName && app[methodName]) {
+                    params = {};
+                    form.find('input').each(function() {
+                        var key = $(this).attr("name")
+                        if (key && key != 'submit') {
+                            params[key] = $(this).val();
+                        }
+                    });
+                    app[methodName](params);
+                }
+            },
+            invalidHandler: function(event, validator) {
+                var validMsg = '';
+                var i = 0;
+                for (var el in validator.invalid) {
+                    validMsg += (i == 0 ? '' : ', ') + el;
+                    i++;
+                }
+                // alert(validMsg)
+                // app.showDialogPage('warning', null, 'Fill in the field', validMsg, 2);
+                console.log('błędny formularz', validator)
             }
-        },
-        invalidHandler: function(event, validator) {
-            console.log('błędny formularz', validator)
-        }
-    });
+        });
+    }
 }
 
 app.menu = function() {
