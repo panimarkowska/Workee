@@ -193,7 +193,15 @@ app.register = function (){
         registerParams.desk = document.getElementById("deskValue").value;
         registerParams.birthday = document.getElementById("birthdayValue").value;
         registerParams.interests = document.getElementById("interestsValue").value;
-    workee.register(registerParams);
+
+        var data = workee.register(registerParams);
+
+        if (data.isRegistered){
+            location.hash = "#newsPage";
+        }
+        else{
+            app.showDialogPage('error', 'ERROR', null, 'Invalid data', 5);
+        }
 }
 
 app.logout = function (){
@@ -215,21 +223,22 @@ app.getUsers = function (){
 
 app.getUser = function (id){
     var user = workee.getUser(id);
-    $('#employeeData').append(user.email + ' '+ user.position);
+    $('#nameUser').text("Name: " + user.name);
+    $('#surnameUser').text("Surname: " + user.surname);
+    $('#positionUser').text("Role: " + user.position);
+    $('#phoneUser').text("Phone number: " + user.phone);
+    $('#emailUser').text("Email address: " + user.email);
+    $('#websiteUser').text("Website: " + user.website);
+    $('#scopeUser').text("Daily scope of tasks: " + user.scope);
+    $('#deskUser').text("Desk number: " + user.desk);
+    $('#birthdayUser').text("Birthday: " + user.birthday);
+    $('#interestsUser').text("Hobbies/interests: " + user.interests);
+
+    debugger;
     $.mobile.changePage($('#userPage'));
     app.setHeader(user.name + ' '+ user.surname)
 
 }
-
-
-
-
-
-
-
-
-
-
 
 
 app.showLoadingPage = function (msg){
