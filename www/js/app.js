@@ -9,14 +9,14 @@ function init() {
 	var onDeviceReady = function () {
 	    app.menu();
 
-        if (app.isLogin()){
+        if (app.isLogged()){
             $.mobile.changePage($("#newsPage"));
         } else {
             $.mobile.changePage($("#loginPage"));
         }
 	    $(document).on("pagebeforeshow", function(event) {
 	        var activePage = $.mobile.pageContainer.pagecontainer("getActivePage");
-            if (!app.isLogin() && activePage.attr('id') != "dialogPage"){
+            if (!app.isLogged() && activePage.attr('id') != "dialogPage"){
                 $.mobile.changePage($("#loginPage"));
             }
         });
@@ -137,7 +137,7 @@ app.setHeaderAndFooter = function () {
     });
 }
 
-app.isLogin = function (){
+app.isLogged = function (){
     // var cookies = document.cookie.split("; ");
 //     for (var i=0; i<cookies.length; i++){
 //         if (cookies[i].indexOf("userLogged") != -1){
@@ -154,23 +154,29 @@ app.isLogin = function (){
     if (app.getFromLocalStorage('userLogged')) {
         return true
     } else {
-        return false
+        // workee.isLogged(
+        //     function(){app.setInLocalStorage('userLogged', true)},
+        //     function(){app.setInLocalStorage('userLogged', false)}
+        //     );
+        return false;
+
     }
-    return workee.isLogin();
+
 }
 
 app.login = function (){
-    var loginValue = document.getElementById("loginValue").value;
+    var emailValue = document.getElementById("emailValue").value;
     var passwordValue = document.getElementById("passwordValue").value;
 
-    if (loginValue.length > 0){
+    if (emailValue.length > 0){
         if (passwordValue.length>0){
-            var data = workee.login(loginValue, passwordValue);
-            if (data.isLogged){
-                // document.cookie = "userLogged=1";
+            workee.login(emailValue, passwordValue, function (data) {
+                if (data.isLogged){
                 app.setInLocalStorage('userLogged', data.isLogged)
                 location.hash = "#newsPage";
-             }
+                }
+            });
+
         }
         else{
             alert("Invalid password.")
@@ -181,19 +187,10 @@ app.login = function (){
     }
 }
 
-app.register = function (){
-    var registerParams = {};
-        registerParams.name = document.getElementById("nameValue").value;
-        registerParams.surname = document.getElementById("surnameValue").value;
-        registerParams.position = document.getElementById("positionValue").value;
-        registerParams.phone = document.getElementById("phoneValue").value;
-        registerParams.email = document.getElementById("emailValue").value;
-        registerParams.website = document.getElementById("websiteValue").value;
-        registerParams.scope = document.getElementById("scopeValue").value;
-        registerParams.desk = document.getElementById("deskValue").value;
-        registerParams.birthday = document.getElementById("birthdayValue").value;
-        registerParams.interests = document.getElementById("interestsValue").value;
-    workee.register(registerParams);
+app.register = function (params){
+    workee.register(params, function() {
+
+    });
 }
 
 app.logout = function (){
@@ -204,20 +201,23 @@ app.logout = function (){
 }
 
 app.getUsers = function (){
-    var users = workee.getUsers();
-    var htmlList = ''
-    for(var i=0; i < users.length; i++){
-        var user = users[i];
-        htmlList += '<li><a href="#" onclick="app.getUser(' + user.id + ')">' + user.name + ' ' + user.surname + '</a></li>'
-    }
-    $('#getPeopleResult').append(htmlList).listview( "refresh" );
+    workee.getUsers(function (users) {
+        var htmlList = ''
+        for(var i=0; i < users.length; i++){
+            var user = users[i];
+            htmlList += '<li><a href="#" onclick="app.getUser(' + user.id + ')">' + user.name + ' ' + user.surname + '</a><div style="display:none">' + user.scope + '</div></li>'
+        }
+        $('#getPeopleResult').html('').append(htmlList).listview( "refresh" );
+    });
 }
 
 app.getUser = function (id){
-    var user = workee.getUser(id);
-    $('#employeeData').append(user.email + ' '+ user.position);
-    $.mobile.changePage($('#userPage'));
-    app.setHeader(user.name + ' '+ user.surname)
+    workee.getUser(id, function(user) {
+        $('#employeeData').append(user.email + ' '+ user.position);
+        $.mobile.changePage($('#userPage'));
+        app.setHeader(user.name + ' '+ user.surname)
+    });
+
 
 }
 

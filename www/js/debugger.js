@@ -3,7 +3,7 @@ if (typeof app == 'undefined') {
 }
 app.debugMode = (function() {
 	var isDebug = true;
-	var isMock = true;
+	var isMock = false;
 
 	var enableDebug = function (){
 		isDebug = true
@@ -32,6 +32,7 @@ app.debugMode = (function() {
 		if (isDebug) {
 			console.error(message + ': ', obj);
 		}
+		app.showDialogPage('error', "Error", null, message);
 	}
 
 	return {
