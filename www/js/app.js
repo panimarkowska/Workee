@@ -41,7 +41,7 @@ app.formsValidation = function() {
                 var methodName = form.attr('data-method');
                 if (methodName && app[methodName]) {
                     params = {};
-                    form.find('input').each(function() {
+                    form.find('input, textarea').each(function() {
                         var key = $(this).attr("name")
                         if (key && key != 'submit') {
                             params[key] = $(this).val();
@@ -65,27 +65,28 @@ app.formsValidation = function() {
     }
 }
 
-app.menu = function() {
-    var switchMenu = function(swipe){
-        var activePage = $.mobile.pageContainer.pagecontainer("getActivePage");
-        if (activePage.attr('id') == "menuPage" && swipe != "right") {
-            $.mobile.back();
-            menuIsActive = false;
-        } else {
-            $.mobile.changePage($("#menuPage"));
-        }
-    };
+app.switchMenu = function(swipe){
+    var activePage = $.mobile.pageContainer.pagecontainer("getActivePage");
+    if (activePage.attr('id') == "menuPage" && typeof swipe == "undefined") {
+        $.mobile.back();
+    }
+    else if (activePage.attr('id') == "menuPage" && swipe == 'left') {
+        $.mobile.back();
+    }
+    else if (activePage.attr('id') != "menuPage" && (typeof swipe == "undefined" || swipe == 'right')) {
+        $.mobile.changePage($("#menuPage"));
+    }
+};
 
-    $('.menuButton').click(function(){
-        switchMenu();
-    });
+app.menu = function() {
     $(document).on( "swiperight", function() {
-        switchMenu("right");
+        app.switchMenu("right");
     });
     $(document).on( "swipeleft", function() {
-        $.mobile.back();
+        app.switchMenu("left");
     });
-}
+};
+
 
 app.setHeader = function (title) {
     var page = $.mobile.pageContainer.pagecontainer("getActivePage");
@@ -96,7 +97,7 @@ app.setHeader = function (title) {
         var headerGrid = '<div class="ui-grid-b ui-responsive">' +
 	                        '<div class="ui-grid-b">' +
                                 '<div class="ui-block-a">' +
-                                (page.attr('data-header-menu') == "false" ? '' : '<a href="#menuPage" class="menuButton ui-icon-bars ui-btn-icon-left"</a>')  +
+                                (page.attr('data-header-menu') == "false" ? '' : '<a href="#menuPage" onclick="app.switchMenu()" class="menuButton ui-icon-bars ui-btn-icon-left"</a>')  +
                                 '</div>' +
                                 '<div class="ui-block-b">' +
                                     '<p class="headerTitle"></p>' +
@@ -188,8 +189,13 @@ app.login = function (){
 }
 
 app.register = function (params){
-    workee.register(params, function() {
-
+    workee.register(params, function(data) {
+        if (data.isRegistered){
+            location.hash = "#newsPage";
+        }
+        else{
+            app.showDialogPage('error', 'ERROR', null, 'Invalid data', 5);
+        }
     });
 }
 
@@ -213,23 +219,23 @@ app.getUsers = function (){
 
 app.getUser = function (id){
     workee.getUser(id, function(user) {
-        $('#employeeData').append(user.email + ' '+ user.position);
+        $('#nameUser').text("Name: " + user.name);
+        $('#surnameUser').text("Surname: " + user.surname);
+        $('#positionUser').text("Role: " + user.position);
+        $('#phoneUser').text("Phone number: " + user.phone);
+        $('#emailUser').text("Email address: " + user.email);
+        $('#websiteUser').text("Website: " + user.website);
+        $('#scopeUser').text("Daily scope of tasks: " + user.scope);
+        $('#deskUser').text("Desk number: " + user.desk);
+        $('#birthdayUser').text("Birthday: " + user.birthday);
+        $('#interestsUser').text("Hobbies/interests: " + user.interests);
+
         $.mobile.changePage($('#userPage'));
         app.setHeader(user.name + ' '+ user.surname)
     });
 
 
 }
-
-
-
-
-
-
-
-
-
-
 
 
 app.showLoadingPage = function (msg){

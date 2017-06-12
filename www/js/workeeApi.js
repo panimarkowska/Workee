@@ -1,10 +1,12 @@
 workeeApi = function () {
-    var requestAction = function (actionName, params, successCallback, errorCallback) {
-        app.showLoadingPage();
+    var requestAction = function (actionName, params, callback, loadingPage) {
+        if (loadingPage == false || typeof loadingPage == 'undefined') {
+            app.showLoadingPage();
+        }
     	var mockAction = app.debugMode.getMock(actionName);
         if (app.debugMode.isMock && mockAction !== null) {
             setTimeout(function(){
-                successCallback(mockAction);
+                callback(mockAction);
                 app.hideLoadingPage();
             }, 1000)
         } else {
@@ -14,9 +16,11 @@ workeeApi = function () {
                 data:  params,
                 method: "POST",
                 success: function (data) {
-                    debugger
                     if (data) {
-                        successCallback && successCallback(data);
+                        if (data && data.length > 0) {
+                            app.setInLocalStorage(actionName, data);
+                        }
+                        callback && callback(data);
                     } else {
                         app.debugMode.error('WorkeeApi: data.status: ' + data.status, data);
                         return null;
@@ -35,7 +39,7 @@ workeeApi = function () {
     var getUser = function (id, successCallback) {
     	if (id) {
 			var param = {id : id};
-			return requestAction('getUser', param, successCallback);
+			requestAction('getUser', param, successCallback);
 		} else {
     		app.debugMode.log('WorkeeApi: method getUser require parameters')
 		}
@@ -60,11 +64,22 @@ workeeApi = function () {
     };
 
 	var getUsers = function (cb) {
-		return requestAction('getUsers', null,  cb);
+	    var actionName = 'getUsers';
+	    var isDataStorage = fillOutFromStorageData(actionName, cb);
+		requestAction(actionName, null,  cb, isDataStorage);
     };
 
     var register = function (registerParams, data){
         requestAction('register', registerParams);
+    };
+
+    var fillOutFromStorageData = function (name ,callback){
+        var storageData = app.getFromLocalStorage(name);
+	    if (storageData) {
+	        callback(storageData);
+	        return true;
+        }
+        return false;
     };
 
     return {

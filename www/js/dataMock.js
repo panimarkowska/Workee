@@ -9,7 +9,7 @@ dataMock.isLogged = {
 };
 
 dataMock.register = {
-    isRegistered : true
+    isRegistered : false
 };
 
 dataMock.getUser = {
