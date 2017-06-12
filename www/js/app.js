@@ -9,14 +9,14 @@ function init() {
 	var onDeviceReady = function () {
 	    app.menu();
 
-        if (app.isLogin()){
+        if (app.isLogged()){
             $.mobile.changePage($("#newsPage"));
         } else {
             $.mobile.changePage($("#loginPage"));
         }
 	    $(document).on("pagebeforeshow", function(event) {
 	        var activePage = $.mobile.pageContainer.pagecontainer("getActivePage");
-            if (!app.isLogin() && activePage.attr('id') != "dialogPage"){
+            if (!app.isLogged() && activePage.attr('id') != "dialogPage"){
                 $.mobile.changePage($("#loginPage"));
             }
         });
@@ -41,7 +41,7 @@ app.formsValidation = function() {
                 var methodName = form.attr('data-method');
                 if (methodName && app[methodName]) {
                     params = {};
-                    form.find('input').each(function() {
+                    form.find('input, textarea').each(function() {
                         var key = $(this).attr("name")
                         if (key && key != 'submit') {
                             params[key] = $(this).val();
@@ -65,27 +65,28 @@ app.formsValidation = function() {
     }
 }
 
-app.menu = function() {
-    var switchMenu = function(swipe){
-        var activePage = $.mobile.pageContainer.pagecontainer("getActivePage");
-        if (activePage.attr('id') == "menuPage" && swipe != "right") {
-            $.mobile.back();
-            menuIsActive = false;
-        } else {
-            $.mobile.changePage($("#menuPage"));
-        }
-    };
+app.switchMenu = function(swipe){
+    var activePage = $.mobile.pageContainer.pagecontainer("getActivePage");
+    if (activePage.attr('id') == "menuPage" && typeof swipe == "undefined") {
+        $.mobile.back();
+    }
+    else if (activePage.attr('id') == "menuPage" && swipe == 'left') {
+        $.mobile.back();
+    }
+    else if (activePage.attr('id') != "menuPage" && (typeof swipe == "undefined" || swipe == 'right')) {
+        $.mobile.changePage($("#menuPage"));
+    }
+};
 
-    $('.menuButton').click(function(){
-        switchMenu();
-    });
+app.menu = function() {
     $(document).on( "swiperight", function() {
-        switchMenu("right");
+        app.switchMenu("right");
     });
     $(document).on( "swipeleft", function() {
-        $.mobile.back();
+        app.switchMenu("left");
     });
-}
+};
+
 
 app.setHeader = function (title) {
     var page = $.mobile.pageContainer.pagecontainer("getActivePage");
@@ -96,7 +97,7 @@ app.setHeader = function (title) {
         var headerGrid = '<div class="ui-grid-b ui-responsive">' +
 	                        '<div class="ui-grid-b">' +
                                 '<div class="ui-block-a">' +
-                                (page.attr('data-header-menu') == "false" ? '' : '<a href="#menuPage" class="menuButton ui-icon-bars ui-btn-icon-left"</a>')  +
+                                (page.attr('data-header-menu') == "false" ? '' : '<a href="#menuPage" onclick="app.switchMenu()" class="menuButton ui-icon-bars ui-btn-icon-left"</a>')  +
                                 '</div>' +
                                 '<div class="ui-block-b">' +
                                     '<p class="headerTitle"></p>' +
@@ -137,7 +138,7 @@ app.setHeaderAndFooter = function () {
     });
 }
 
-app.isLogin = function (){
+app.isLogged = function (){
     // var cookies = document.cookie.split("; ");
 //     for (var i=0; i<cookies.length; i++){
 //         if (cookies[i].indexOf("userLogged") != -1){
@@ -154,23 +155,29 @@ app.isLogin = function (){
     if (app.getFromLocalStorage('userLogged')) {
         return true
     } else {
-        return false
+        // workee.isLogged(
+        //     function(){app.setInLocalStorage('userLogged', true)},
+        //     function(){app.setInLocalStorage('userLogged', false)}
+        //     );
+        return false;
+
     }
-    return workee.isLogin();
+
 }
 
 app.login = function (){
-    var loginValue = document.getElementById("loginValue").value;
+    var emailValue = document.getElementById("emailValue").value;
     var passwordValue = document.getElementById("passwordValue").value;
 
-    if (loginValue.length > 0){
+    if (emailValue.length > 0){
         if (passwordValue.length>0){
-            var data = workee.login(loginValue, passwordValue);
-            if (data.isLogged){
-                // document.cookie = "userLogged=1";
+            workee.login(emailValue, passwordValue, function (data) {
+                if (data.isLogged){
                 app.setInLocalStorage('userLogged', data.isLogged)
                 location.hash = "#newsPage";
-             }
+                }
+            });
+
         }
         else{
             alert("Invalid password.")
@@ -181,27 +188,15 @@ app.login = function (){
     }
 }
 
-app.register = function (){
-    var registerParams = {};
-        registerParams.name = document.getElementById("nameValue").value;
-        registerParams.surname = document.getElementById("surnameValue").value;
-        registerParams.position = document.getElementById("positionValue").value;
-        registerParams.phone = document.getElementById("phoneValue").value;
-        registerParams.email = document.getElementById("emailValue").value;
-        registerParams.website = document.getElementById("websiteValue").value;
-        registerParams.scope = document.getElementById("scopeValue").value;
-        registerParams.desk = document.getElementById("deskValue").value;
-        registerParams.birthday = document.getElementById("birthdayValue").value;
-        registerParams.interests = document.getElementById("interestsValue").value;
-
-        var data = workee.register(registerParams);
-
+app.register = function (params){
+    workee.register(params, function(data) {
         if (data.isRegistered){
             location.hash = "#newsPage";
         }
         else{
             app.showDialogPage('error', 'ERROR', null, 'Invalid data', 5);
         }
+    });
 }
 
 app.logout = function (){
@@ -212,31 +207,33 @@ app.logout = function (){
 }
 
 app.getUsers = function (){
-    var users = workee.getUsers();
-    var htmlList = ''
-    for(var i=0; i < users.length; i++){
-        var user = users[i];
-        htmlList += '<li><a href="#" onclick="app.getUser(' + user.id + ')">' + user.name + ' ' + user.surname + '</a></li>'
-    }
-    $('#getPeopleResult').append(htmlList).listview( "refresh" );
+    workee.getUsers(function (users) {
+        var htmlList = ''
+        for(var i=0; i < users.length; i++){
+            var user = users[i];
+            htmlList += '<li><a href="#" onclick="app.getUser(' + user.id + ')">' + user.name + ' ' + user.surname + '</a><div style="display:none">' + user.scope + '</div></li>'
+        }
+        $('#getPeopleResult').html('').append(htmlList).listview( "refresh" );
+    });
 }
 
 app.getUser = function (id){
-    var user = workee.getUser(id);
-    $('#nameUser').text("Name: " + user.name);
-    $('#surnameUser').text("Surname: " + user.surname);
-    $('#positionUser').text("Role: " + user.position);
-    $('#phoneUser').text("Phone number: " + user.phone);
-    $('#emailUser').text("Email address: " + user.email);
-    $('#websiteUser').text("Website: " + user.website);
-    $('#scopeUser').text("Daily scope of tasks: " + user.scope);
-    $('#deskUser').text("Desk number: " + user.desk);
-    $('#birthdayUser').text("Birthday: " + user.birthday);
-    $('#interestsUser').text("Hobbies/interests: " + user.interests);
+    workee.getUser(id, function(user) {
+        $('#nameUser').text("Name: " + user.name);
+        $('#surnameUser').text("Surname: " + user.surname);
+        $('#positionUser').text("Role: " + user.position);
+        $('#phoneUser').text("Phone number: " + user.phone);
+        $('#emailUser').text("Email address: " + user.email);
+        $('#websiteUser').text("Website: " + user.website);
+        $('#scopeUser').text("Daily scope of tasks: " + user.scope);
+        $('#deskUser').text("Desk number: " + user.desk);
+        $('#birthdayUser').text("Birthday: " + user.birthday);
+        $('#interestsUser').text("Hobbies/interests: " + user.interests);
 
-    debugger;
-    $.mobile.changePage($('#userPage'));
-    app.setHeader(user.name + ' '+ user.surname)
+        $.mobile.changePage($('#userPage'));
+        app.setHeader(user.name + ' '+ user.surname)
+    });
+
 
 }
 

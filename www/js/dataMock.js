@@ -4,6 +4,10 @@ dataMock.login = {
 	isLogged : 102
 };
 
+dataMock.isLogged = {
+	isLogged : 102
+};
+
 dataMock.register = {
     isRegistered : false
 };
@@ -13,8 +17,13 @@ dataMock.getUser = {
 	name : 'Michał',
 	surname : 'Kamiński',
 	email : 'michal.kaminski@workee.pl',
-	tel : '668536876',
-	position : 'accountant'
+	phone : '668536876',
+	position : 'accountant',
+	website : 'http://test.pl',
+	desk : '60',
+	scope : 'pierogi zupa',
+	birthday : '2017-05-12',
+	interests : 'interests'
 };
 
 dataMock.getUsers = [
@@ -23,8 +32,13 @@ dataMock.getUsers = [
 		name : 'Michał',
 		surname : 'Kamiński',
 		email : 'michal.kaminski@workee.pl',
-		tel : '668536876',
-		position : 'accountant'
+		phone : '668536876',
+		position : 'accountant',
+		website : 'http://test.pl',
+		desk : '60',
+		scope : 'pierogi zupa',
+		birthday : '2017-05-12',
+		interests : 'interests'
 	},
 	{
 		id : '2',
@@ -32,7 +46,13 @@ dataMock.getUsers = [
 		surname : 'Markowska',
 		email : 'markowskai@workee.pl',
 		tel : '987952457',
-		position : 'accountant'
+		phone : '668536876',
+		position : 'accountant',
+		website : 'http://test.pl',
+		desk : '60',
+		scope : 'grafika',
+		birthday : '2017-05-12',
+		interests : 'interests'
 	},
 	{
 		id : '3',
