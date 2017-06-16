@@ -10,39 +10,62 @@ workeeApi = function () {
                 app.hideLoadingPage();
             }, 1000)
         } else {
+            if (device.platform == 'browser') {
+                alert('Hej jesteś na przegladarce PC i nie kożystasz z mockowania danych. Dlatego aplikacją Ci świruje :)');
+            }
 
-            return $.ajax({
-                url: 'http://workee.mytool.pl/' + actionName,
+            var ajaxParams = {
+                url: app.config.apiHost + '/' + actionName,
                 data:  params,
                 method: "POST",
+                async: true,
+                timeout: 3000,
                 success: function (data) {
                     if (data) {
-                        if (data && data.length > 0) {
-                            app.setInLocalStorage(actionName, data);
+                        if (data.isLogged === false) {
+                            var user = app.getFromLocalStorage('user');
+                            if (user.email && user.password) {
+                                login(user.email, user.password, function () {
+                                    requestAction(actionName, params, callback)
+                                });
+                            }
                         }
-                        callback && callback(data);
-                    } else {
-                        app.debugMode.error('WorkeeApi: data.status: ' + data.status, data);
-                        return null;
+                        else if (data.error) {
+                            app.debugMode.error('WorkeeApi: data.status: ' + data.status, data);
+                        }
+
+                        else {
+                            if (data.length > 0) {
+                                app.setInLocalStorage(actionName, data);
+                            }
+                            callback && callback(data);
+                        }
                     }
                     app.hideLoadingPage();
                 },
                 error: function (data) {
                     // app.debugMode.error('WorkeeApi: error ' + actionName + ' action', data);
                     app.hideLoadingPage();
-					return null;
                 }
-            });
+            };
+            if (params && typeof params.append == "function") {
+                ajaxParams.cache = false;
+                ajaxParams.processData = false;
+                ajaxParams.contentType = false;
+            }
+            return $.ajax(ajaxParams);
         }
     };
 
-    var getUser = function (id, successCallback) {
+    var getUser = function (id, callback) {
+       // app.debugMode.isMock = true
     	if (id) {
 			var param = {id : id};
-			requestAction('getUser', param, successCallback);
+			requestAction('getUser', param, callback);
 		} else {
     		app.debugMode.log('WorkeeApi: method getUser require parameters')
 		}
+		// app.debugMode.isMock = false
     };
 
      var login = function (emailValue, passwordValue, successCallback) {
@@ -69,8 +92,12 @@ workeeApi = function () {
 		requestAction(actionName, null,  cb, isDataStorage);
     };
 
-    var register = function (registerParams, data){
-        requestAction('register', registerParams);
+    var register = function (registerParams, cb){
+        requestAction('register', registerParams, cb);
+    };
+
+    var editUser = function (registerParams, cb){
+        requestAction('edit', registerParams, cb);
     };
 
     var fillOutFromStorageData = function (name ,callback){
@@ -87,6 +114,7 @@ workeeApi = function () {
     	getUsers : getUsers,
     	login : login,
     	isLogged : isLogged,
-    	register : register
+    	register : register,
+    	editUser : editUser
 	}
 }

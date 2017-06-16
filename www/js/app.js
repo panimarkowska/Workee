@@ -1,6 +1,11 @@
 if (typeof app == 'undefined') {
 	app = {};
 }
+app.config = {
+    apiHost : 'http://hd.pl'
+}
+
+
 function init() {
     app.setHeaderAndFooter();
     workee = workeeApi();
@@ -155,69 +160,103 @@ app.isLogged = function (){
     if (app.getFromLocalStorage('userLogged')) {
         return true
     } else {
-        // workee.isLogged(
-        //     function(){app.setInLocalStorage('userLogged', true)},
-        //     function(){app.setInLocalStorage('userLogged', false)}
-        //     );
+        $.mobile.changePage($('#loginPage'));
         return false;
-
     }
 
 }
 
-app.login = function (){
-    var emailValue = document.getElementById("emailValue").value;
-    var passwordValue = document.getElementById("passwordValue").value;
-
-    if (emailValue.length > 0){
-        if (passwordValue.length>0){
-            workee.login(emailValue, passwordValue, function (data) {
-                if (data.isLogged){
-                app.setInLocalStorage('userLogged', data.isLogged)
-                location.hash = "#newsPage";
+app.login = function (params){
+    workee.login(params.email, params.password, function (data) {
+        if (data.isLogged){
+            workee.getUser(data.isLogged, function (user){
+                if (user && user.password) {
+                    app.setInLocalStorage('userLogged', user.id);
+                    $.mobile.changePage($('#newsPage'));
+                    app.setInLocalStorage('user', user);
                 }
             });
-
-        }
-        else{
-            alert("Invalid password.")
-        }
-    }
-    else{
-        alert("Invalid login.")
-    }
-}
-
-app.register = function (params){
-    workee.register(params, function(data) {
-        if (data.isRegistered){
-            location.hash = "#newsPage";
-        }
-        else{
-            app.showDialogPage('error', 'ERROR', null, 'Invalid data', 5);
         }
     });
 }
 
+app.register = function (params){
+    if ($('#registrationButton').attr('data-status') == 'registration') {
+        workee.register(params, function (data) {
+            if (data.isRegistered) {
+                location.hash = "#newsPage";
+            }
+            else {
+                app.showDialogPage('error', 'ERROR', null, 'Invalid data', 5);
+            }
+        });
+    }
+    else {
+        workee.edit(params, function (data) {
+            if (data.isRegistered) {
+                location.hash = "#newsPage";
+            }
+            else {
+                app.showDialogPage('error', 'ERROR', null, 'Invalid data', 5);
+            }
+        });
+    }
+}
+
+app.editPhoto = function (){
+    $('#photoVal').on('change', function(){
+        var file_data = $(this).prop('files')[0];
+        var form_data = new FormData();
+        form_data.append('uploads', file_data);
+            workee.editUser(form_data, function (data) {
+            if (data.photo) {
+                $('#myPhoto').attr('src', app.config.apiHost + '/photo/' + data.photo);
+            }
+            else {
+                app.showDialogPage('error', 'ERROR', null, 'Invalid data', 5);
+            }
+        });
+        $(this).off('change');
+        $(this).val('');
+    });
+    $('#photoVal').click();
+}
+
 app.logout = function (){
-    app.removeFromLocalStorage('userLogged');
+    app.removeFromLocalStorage();
     // document.cookie = "userLogged=0";
     $.mobile.changePage($('#loginPage'));
-
 }
 
 app.getUsers = function (){
+    $('#profileEditButton').css({display:'none'});
     workee.getUsers(function (users) {
         var htmlList = ''
         for(var i=0; i < users.length; i++){
             var user = users[i];
-            htmlList += '<li><a href="#" onclick="app.getUser(' + user.id + ')">' + user.name + ' ' + user.surname + '</a><div style="display:none">' + user.scope + '</div></li>'
+            htmlList += '<li><a href="#" onclick="app.getUser(' + user.id + ')">'
+                                + '<div class="ui-grid-b">'
+                                    + '<div class="ui-block-a" style="width:20%;margin-top: 1%;">'
+                                        + '<img style="width:45px; clip-path: circle(50% at 50% 50%);" src="' + (user.photo ?  app.config.apiHost + '/photo/' + user.photo : 'img/user.png') + '"/>'
+                                    + '</div>'
+                                    + '<div class="ui-block-b" style="width:55%;margin-top: 4%"><p1 style="font-size: 17px;color:#000000;">'
+                                            + user.name + ' ' + user.surname
+                                    + '</p1></div>'
+                                    + '<div class="ui-block-c" style="width:22%;margin-top: 3%;">'
+                                        + '<img style="width:27px;float:right" src="img/message.png"/>'
+                                    + '</div>'
+                                + '</div>'
+
+                + '</a><div style="display:none">' + user.scope + '</div></li>'
         }
         $('#getPeopleResult').html('').append(htmlList).listview( "refresh" );
     });
 }
 
 app.getUser = function (id){
+    if (id == app.getFromLocalStorage('userLogged')) {
+        $('#profileEditButton').css({display:''});
+    }
     workee.getUser(id, function(user) {
         $('#nameUser').text("Name: " + user.name);
         $('#surnameUser').text("Surname: " + user.surname);
@@ -229,12 +268,27 @@ app.getUser = function (id){
         $('#deskUser').text("Desk number: " + user.desk);
         $('#birthdayUser').text("Birthday: " + user.birthday);
         $('#interestsUser').text("Hobbies/interests: " + user.interests);
-
+        $('#myPhoto').attr('src', (user.photo ?  (app.config.apiHost + '/photo/' + user.photo) : 'img/user.png'));
         $.mobile.changePage($('#userPage'));
         app.setHeader(user.name + ' '+ user.surname)
     });
+};
 
+app.editUser = function (id){
+    workee.getUser(id, function(user) {
+        for (var key in user) {
+            $('#' + key + 'Value').val(user[key]);
+        };
+        $('#registrationButton').attr('data-status', 'edit');
+        $('#profileEditButton').css({display:''});
+        $.mobile.changePage($('#registrationPage'));
+        app.setHeader(user.name + ' '+ user.surname)
+    });
+};
 
+app.clearRegistration = function () {
+    $('#registrationPage').find('input, textarea').val('');
+$('#registrationButton').attr('data-status', 'registration');
 }
 
 
@@ -314,5 +368,7 @@ app.removeFromLocalStorage = function (key) {
         delete storageParams[key];
         localStorage.app = JSON.stringify(storageParams);
     }
-
+    else if (!key) {
+        localStorage.app = '{}';
+    }
 }
