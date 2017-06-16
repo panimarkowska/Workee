@@ -37,8 +37,8 @@
 				</div>
 				<form class="formValidation" data-method="login">
 					<fieldset>
-						<input id="emailValue" type="text" name="email" value="michall.kaminskii@gmail.com" placeholder="email" required/>
-						<input id="passwordValue" type="password" name="password" value="m" placeholder="password" required/>
+						<input id="emailVal" type="text" name="email" value="michall.kaminskii@gmail.com" placeholder="email" required/>
+						<input id="passwordVal" type="password" name="password" value="m" placeholder="password" required/>
 						<input class="submit" type="submit" value="Submit">
 					</fieldset>
 				</form>
@@ -55,7 +55,7 @@
 							<li><a href="#newsPage" class="ui-btn">News feed</a></li>
 							<li><a href="#userPage" onclick="app.getUser(app.getFromLocalStorage('userLogged'))" class="ui-btn">My profile</a></li>
 							<li><a href="#peoplePage" class="ui-btn">People</a></li>
-							<li><a href="#registrationPage" class="ui-btn">Registration</a></li>
+							<li><a href="#registrationPage" class="ui-btn" onclick="app.clearRegistration()">Registration</a></li>
 							<li><a href="#testPage" class="ui-btn">Test</a></li>
 							<li><a href="#" onclick="app.showDialogPage('error', 'ERROR', 'ERROR', 'Error error error error error error error', 5)" class="ui-btn">Dialog Page</a></li>
 							<li><a href="#" class="ui-btn" onclick="app.showLoadingPage()">loading Page</a></li>
@@ -120,12 +120,13 @@
 						<input id="phoneValue" type="tel" name="phone" placeholder="your phone number" required/>
 						<input id="emailValue" type="email" name="email" placeholder="your email address" required/>
 						<input id="passwordValue" type="password" name="password" placeholder="password" required/>
-						<input id="websiteValue" type="url" name="website" placeholder="link to your website" />
+						<input id="websiteValue" type="url" name="website" placeholder="link to your website"/>
 						<textarea id="scopeValue" name="scope" placeholder="your daily scope of tasks" ></textarea>
 						<input id="deskValue" type="number" name="desk" placeholder="number of your desk" required/>
 						<input id="birthdayValue" type="date" name="birthday" placeholder="your birthday" required/>
-						<textarea id="interestsValue" name="interests">your hobbies or interests</textarea>
-						<input class="submit" type="submit" value="Save">
+						<input id="photoVal" type="file" placeholder="your photo"/>
+						<textarea id="interestsValue" name="interests" placeholder="your hobbies or interests"></textarea>
+						<input id="registrationButton" data-status="registration" class="submit" type="submit" value="Save">
 					</fieldset>
 				</form>
 
@@ -150,9 +151,8 @@
 							<p id="nameUser">Name</p>
 							<p id="surnameUser">Surname</p>
 						</div>
-
 						<div class="ui-block-b">
-							<img style="width:100%" src="img/logo.png"/>
+							<img style="margin: 10px auto 0 auto; display: block;width: 50%;clip-path: circle(50% at 50% 50%);" src="img/user.png" id="myPhoto" onclick="app.editPhoto()"/>
 						</div>
 					</div>
 				<hr/>
@@ -169,8 +169,9 @@
 						<p id="birthdayUser">Birthday</p>
 						<p id="interestsUser">Interests/hobbies</p>
 					</div>
-
 				</div>
+									<a href="#" id="profileEditButton" onclick="app.editUser(app.getFromLocalStorage('userLogged'))" class="ui-btn ui-btn-b ui-shadow ui-corner-all">Edit</a>
+
 
 			</div>
 		</div>
@@ -180,8 +181,6 @@
 				<div id="employeeData"></div>
 			</div>
 		</div>-->
-
-
 
 
 
