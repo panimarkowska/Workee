@@ -2,7 +2,7 @@ if (typeof app == 'undefined') {
 	app = {};
 }
 app.config = {
-    apiHost : 'http://hd.pl'
+    apiHost : 'http://workee.mytool.pl'
 }
 
 
