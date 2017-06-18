@@ -3,7 +3,7 @@ if (typeof app == 'undefined') {
 }
 app.debugMode = (function() {
 	var isDebug = true;
-	var isMock = false;
+	var isMock = true;
 
 	var enableDebug = function (){
 		isDebug = true

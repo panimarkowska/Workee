@@ -68,34 +68,9 @@
 		</div>
 
 		<!--_____________________ NEWS PAGE ____________________ -->
-		<div data-role="page" id="newsPage" data-header-title="News">
+		<div data-role="page" id="newsPage" data-header-title="News" data-action-method="getNews">
 			<div data-role="main" class="ui-content">
-				<div class="ui-grid-b ui-responsive">
-						<div class="ui-grid-b">
-							<div class="news">
-								<div class="newsLine">
-									<div class='newsLineSeparator'></div>
-									<div class="newsLinePoint"></div>
-
-								</div>
-								<div class="newsLineText">
-									The border-radius property allows you to add rounded corners to elements.
-								</div>
-							</div>
-					</div>
-						<div class="ui-grid-b">
-							<div class="news">
-								<div class="newsLine">
-									<div class='newsLineSeparator'></div>
-									<div class="newsLinePoint"></div>
-
-								</div>
-								<div class="newsLineText">
-									The border-radius property allows you to add rounded corners to elements.
-								</div>
-							</div>
-					</div>
-				</div>
+				<div class="ui-grid-b ui-responsive" id="getNewsResult"></div>
 			</div>
 
 		</div>
@@ -140,6 +115,7 @@
 				</ul>
 			</div>
 		</div>
+
 
 
 		<!--_____________________USER PAGE____________________ -->

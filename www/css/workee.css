@@ -1,5 +1,5 @@
 #loadingPage {
-  background-color: rgba(255,255,255,0.9);
+  background-color: rgba(255,255,255,1);
   position: relative;
   height: 100%;
   z-index: 9999;
@@ -68,14 +68,14 @@
 }
 
 .newsLine {
-  width: 25px;
+  width: 15px;
   height:100%;
   float: left;
   border-right: 2px solid red;
 }
 
 .newsLineSeparator {
-  height: 35%;
+  height: 16%;
 }
 .newsLinePoint {
   width: 12px;
