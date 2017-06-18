@@ -8,10 +8,10 @@ workeeApi = function () {
             setTimeout(function(){
                 callback(mockAction);
                 app.hideLoadingPage();
-            }, 1000)
+            }, 5000)
         } else {
             if (device.platform == 'browser') {
-                alert('Hej jesteś na przegladarce PC i nie kożystasz z mockowania danych. Dlatego aplikacją Ci świruje :)');
+                // alert('Hej jesteś na przegladarce PC i nie kożystasz z mockowania danych. Dlatego aplikacją Ci świruje :)');
             }
 
             var ajaxParams = {
@@ -92,6 +92,17 @@ workeeApi = function () {
 		requestAction(actionName, null,  cb, isDataStorage);
     };
 
+    var getNews = function (cb) {
+	    var actionName = 'getNews';
+	    var isDataStorage = fillOutFromStorageData(actionName, cb);
+		requestAction(actionName, null,  cb, isDataStorage);
+    };
+
+    var setNews = function (params, cb) {
+	    var actionName = 'setNews';
+		requestAction(actionName, params,  cb);
+    };
+
     var register = function (registerParams, cb){
         requestAction('register', registerParams, cb);
     };
@@ -115,6 +126,8 @@ workeeApi = function () {
     	login : login,
     	isLogged : isLogged,
     	register : register,
-    	editUser : editUser
+    	editUser : editUser,
+    	getNews : getNews,
+    	setNews : setNews,
 	}
 }

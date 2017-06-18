@@ -68,14 +68,14 @@
 }
 
 .newsLine {
-  width: 25px;
+  width: 15px;
   height:100%;
   float: left;
   border-right: 2px solid red;
 }
 
 .newsLineSeparator {
-  height: 35%;
+  height: 16%;
 }
 .newsLinePoint {
   width: 12px;

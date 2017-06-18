@@ -5,21 +5,21 @@ app.config = {
     apiHost : 'http://workee.mytool.pl'
 }
 
-
 function init() {
+    app.showLoadingPage();
     app.setHeaderAndFooter();
     workee = workeeApi();
     app.formsValidation();
 
 	var onDeviceReady = function () {
 	    app.menu();
-
+        app.hideLoadingPage();
         if (app.isLogged()){
             $.mobile.changePage($("#newsPage"));
         } else {
             $.mobile.changePage($("#loginPage"));
         }
-	    $(document).on("pagebeforeshow", function(event) {
+        $(document).on("pagebeforeshow", function(event) {
 	        var activePage = $.mobile.pageContainer.pagecontainer("getActivePage");
             if (!app.isLogged() && activePage.attr('id') != "dialogPage"){
                 $.mobile.changePage($("#loginPage"));
@@ -226,6 +226,29 @@ app.logout = function (){
     app.removeFromLocalStorage();
     // document.cookie = "userLogged=0";
     $.mobile.changePage($('#loginPage'));
+}
+
+app.getNews = function (){
+    workee.getNews(function (allNews) {
+        var htmlList = ''
+        debugger;
+        for(var i=0; i < allNews.length; i++){
+            var news= allNews[i];
+            htmlList += '<div class="ui-grid-b">'
+                        + '<div class="news">'
+                            + '<div class="newsLine">'
+                                + '<div class="newsLineSeparator"></div>'
+                                + '<div class="newsLinePoint"></div>'
+                            + '</div>'
+                            + '<div class="newsLineText">'
+                                + '<p style="font-weight: bold;margin: 0 0 4px 0;">' + news.title + '</p>'
+                                + news.message
+                            + '</div>'
+                        + '</div>'
+                    + '</div>'
+        }
+        $('#getNewsResult').html('').append(htmlList);
+    });
 }
 
 app.getUsers = function (){
