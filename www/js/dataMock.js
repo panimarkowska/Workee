@@ -12,6 +12,10 @@ dataMock.register = {
     isRegistered : false
 };
 
+dataMock.setNews = {
+	addedNews : true
+};
+
 dataMock.getNews = [
 	{
 		"id":1,
@@ -35,7 +39,32 @@ dataMock.getNews = [
 		"displayed_date":"2017-06-16T22:00:00.000Z",
 		"added_date":"2017-06-16T22:00:00.000Z"
 	}
-	]
+	];
+
+dataMock.setAbsence = {
+	addedAbsence : true
+};
+
+dataMock.getAbsence = [
+	{
+		id : 1,
+		user_id : 10,
+		type : 'L4',
+		date : '2017-06-16T22:00:00.000Z'
+	},
+	{
+		id : 2,
+		user_id : 10,
+		type : 'OTHER',
+		date : '2017-06-16T22:00:00.000Z'
+	},
+	{
+		id : 3,
+		user_id : 10,
+		type : 'VACATION',
+		date : '2017-06-16T22:00:00.000Z'
+	}
+	];
 
 dataMock.getUser = {
 	id : '10',

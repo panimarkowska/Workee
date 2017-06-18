@@ -1,14 +1,14 @@
 workeeApi = function () {
     var requestAction = function (actionName, params, callback, loadingPage) {
         if (loadingPage == false || typeof loadingPage == 'undefined') {
-            app.showLoadingPage();
+            // app.showLoadingPage();
         }
     	var mockAction = app.debugMode.getMock(actionName);
         if (app.debugMode.isMock && mockAction !== null) {
             setTimeout(function(){
                 callback(mockAction);
-                app.hideLoadingPage();
-            }, 5000)
+                // app.hideLoadingPage();
+            }, 1000)
         } else {
             if (device.platform == 'browser') {
                 // alert('Hej jesteś na przegladarce PC i nie kożystasz z mockowania danych. Dlatego aplikacją Ci świruje :)');

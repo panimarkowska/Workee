@@ -14,24 +14,24 @@ function init() {
 	var onDeviceReady = function () {
 	    app.menu();
         app.hideLoadingPage();
-        if (app.isLogged()){
-            $.mobile.changePage($("#newsPage"));
-        } else {
-            $.mobile.changePage($("#loginPage"));
-        }
+
         $(document).on("pagebeforeshow", function(event) {
 	        var activePage = $.mobile.pageContainer.pagecontainer("getActivePage");
             if (!app.isLogged() && activePage.attr('id') != "dialogPage"){
                 $.mobile.changePage($("#loginPage"));
             }
-        });
-        $(document).on("pagechange", function(event) {
-            var activePage = $.mobile.pageContainer.pagecontainer("getActivePage");
+
             var actionMethod = activePage.attr('data-action-method');
             if (actionMethod && app[actionMethod]) {
                 app[actionMethod]();
             }
         });
+
+        if (app.isLogged()){
+            $.mobile.changePage($("#newsPage"));
+        } else {
+            $.mobile.changePage($("#loginPage"));
+        }
 	}
 	document.addEventListener("deviceready",onDeviceReady, false);
 }
@@ -160,18 +160,18 @@ app.isLogged = function (){
     if (app.getFromLocalStorage('userLogged')) {
         return true
     } else {
-        $.mobile.changePage($('#loginPage'));
         return false;
     }
 
 }
 
 app.login = function (params){
+    app.showLoadingPage();
     workee.login(params.email, params.password, function (data) {
         if (data.isLogged){
-            workee.getUser(data.isLogged, function (user){
+           workee.getUser(data.isLogged, function (user){
                 if (user && user.password) {
-                    app.setInLocalStorage('userLogged', user.id);
+                    app.setInLocalStorage('userLogged', data.isLogged);
                     $.mobile.changePage($('#newsPage'));
                     app.setInLocalStorage('user', user);
                 }
@@ -181,6 +181,7 @@ app.login = function (params){
 }
 
 app.register = function (params){
+    app.showLoadingPage();
     if ($('#registrationButton').attr('data-status') == 'registration') {
         workee.register(params, function (data) {
             if (data.isRegistered) {
@@ -189,6 +190,7 @@ app.register = function (params){
             else {
                 app.showDialogPage('error', 'ERROR', null, 'Invalid data', 5);
             }
+            app.hideLoadingPage();
         });
     }
     else {
@@ -204,6 +206,7 @@ app.register = function (params){
 }
 
 app.editPhoto = function (){
+    app.showLoadingPage();
     $('#photoVal').on('change', function(){
         var file_data = $(this).prop('files')[0];
         var form_data = new FormData();
@@ -215,6 +218,7 @@ app.editPhoto = function (){
             else {
                 app.showDialogPage('error', 'ERROR', null, 'Invalid data', 5);
             }
+            app.hideLoadingPage();
         });
         $(this).off('change');
         $(this).val('');
@@ -229,9 +233,9 @@ app.logout = function (){
 }
 
 app.getNews = function (){
+    app.showLoadingPage();
     workee.getNews(function (allNews) {
         var htmlList = ''
-        debugger;
         for(var i=0; i < allNews.length; i++){
             var news= allNews[i];
             htmlList += '<div class="ui-grid-b">'
@@ -248,10 +252,12 @@ app.getNews = function (){
                     + '</div>'
         }
         $('#getNewsResult').html('').append(htmlList);
+        app.hideLoadingPage();
     });
 }
 
 app.getUsers = function (){
+    app.showLoadingPage();
     $('#profileEditButton').css({display:'none'});
     workee.getUsers(function (users) {
         var htmlList = ''
@@ -273,10 +279,12 @@ app.getUsers = function (){
                 + '</a><div style="display:none">' + user.scope + '</div></li>'
         }
         $('#getPeopleResult').html('').append(htmlList).listview( "refresh" );
+        app.hideLoadingPage();
     });
 }
 
 app.getUser = function (id){
+    app.showLoadingPage();
     if (id == app.getFromLocalStorage('userLogged')) {
         $('#profileEditButton').css({display:''});
     }
@@ -294,10 +302,13 @@ app.getUser = function (id){
         $('#myPhoto').attr('src', (user.photo ?  (app.config.apiHost + '/photo/' + user.photo) : 'img/user.png'));
         $.mobile.changePage($('#userPage'));
         app.setHeader(user.name + ' '+ user.surname)
+        app.hideLoadingPage();
     });
+
 };
 
 app.editUser = function (id){
+    app.showLoadingPage();
     workee.getUser(id, function(user) {
         for (var key in user) {
             $('#' + key + 'Value').val(user[key]);
@@ -306,6 +317,7 @@ app.editUser = function (id){
         $('#profileEditButton').css({display:''});
         $.mobile.changePage($('#registrationPage'));
         app.setHeader(user.name + ' '+ user.surname)
+        app.hideLoadingPage();
     });
 };
 
