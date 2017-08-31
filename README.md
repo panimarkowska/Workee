@@ -18,7 +18,6 @@ Providing such information will help all employees to stay informed and up to da
 
 **Authors:**
 
-<table>
     <tr>
         <td><b>Paulina Markowska</b></td>
         <td>181003</td>
@@ -26,5 +25,4 @@ Providing such information will help all employees to stay informed and up to da
     <tr>
         <td><b>Michał Kamiński</b></td>
         <td>204549</td>
-</table>
 
